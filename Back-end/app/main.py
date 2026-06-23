@@ -1,16 +1,29 @@
 # app/main.py
-from app.core.board import FanoronTeloBoard
-from app.core.game_rules import GameRules
+import sys
+import os
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+# Gestion sécurisée du chemin pour les modules locaux
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app.api.routes import router as api_router
+
+app = FastAPI(title="Fanoron-telo API - ISPM Hackathon")
+
+# Configuration CORS pour que le pôle Frontend puisse se connecter sans blocage navigateur
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # pour y aller plus vite
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Inclusion des routes du jeu
+app.include_router(api_router, prefix="/api")
 
 if __name__ == "__main__":
-    # 1. On crée le plateau vide
-    my_board = FanoronTeloBoard()
-    
-    # 2. On joue des coups via la classe de règles
-    GameRules.place_piece(my_board, 0) # X place en 0
-    GameRules.place_piece(my_board, 4) # O place en 4
-    GameRules.place_piece(my_board, 1) # X place en 1
-    
-    # Affichage du résultat
-    my_board.display_board()
-    print(f"Vainqueur : {GameRules.check_winner(my_board)}")
+    import uvicorn
+    # Lancement du serveur sur le port 8000
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
