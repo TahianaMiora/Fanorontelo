@@ -37,7 +37,13 @@ function TableBois() {
     );
 }
 
-export default function FanoronteloScene() {
+import { GameMode } from "./manageGame"; 
+
+interface FanoronteloProps {
+  mode: GameMode;
+}
+
+export default function FanoronteloScene({ mode }: FanoronteloProps) {
     const [boardPoint, setBoardPoint] = useState<CaseContenu[]>(Array(9).fill(null));
     const [pionSelectionne, setPionSelectionne] = useState<number | null>(null);
     const [tour, setTour] = useState<-1 | 1>(-1);
@@ -81,7 +87,7 @@ export default function FanoronteloScene() {
     };
 
     return (
-        <div className="w-full h-screen">
+        <div className="w-full h-screen bg-neutral-950">
             {/* Correction de camera : position attend un tableau [X, Y, Z] */}
             <Canvas camera={{ position: [0, 12, 12], fov: 45 }}>
                 {/* 1. Lumière globale uniforme et intense */}
