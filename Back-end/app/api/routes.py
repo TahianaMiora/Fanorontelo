@@ -59,6 +59,14 @@ def undo_move():
         raise HTTPException(status_code=400, detail="Impossible d'annuler, aucun coup en historique.")
     return get_game_state()
 
+@router.post("/redo")
+def redo_move():
+    """Route pour l'action Rétablir du Frontend"""
+    success = GameRules.redo(current_game)
+    if not success:
+        raise HTTPException(status_code=400, detail="Impossible de rétablir, aucun coup à refaire.")
+    return get_game_state()
+
 @router.post("/reset")
 def reset_game():
     """Réinitialise complètement la partie"""

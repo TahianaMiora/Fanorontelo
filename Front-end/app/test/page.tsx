@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Undo2, RotateCcw, Heart, Sparkles, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Undo2, Redo2, RotateCcw, Heart, Sparkles, User } from "lucide-react";
 
 const API_URL = "http://127.0.0.1:8000/api";
 
@@ -105,6 +105,19 @@ export default function FanoronTeloFront() {
     }
   };
 
+  const handleRedo = async () => {
+    try {
+      const res = await fetch(`${API_URL}/redo`, { method: "POST" });
+      if (!res.ok) throw new Error("Rien à rétablir ! 🌸");
+      const data = await res.json();
+      setGameState(data);
+      setSelectedSrc(null);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
   if (!gameState) {
     return (
       <div className="min-h-screen bg-linear-to-tr from-pink-100 via-purple-50 to-pink-200 flex flex-col items-center justify-center font-sans">
@@ -165,10 +178,9 @@ export default function FanoronTeloFront() {
           </span>
         </div>
 
-        {/* Le Plateau Fanoron-telo (Grille 3x3 avec lignes SVG en arrière-plan) */}
+        {/* Le Plateau Fanoron-telo */}
         <div className="relative w-72 h-72 bg-white/40 rounded-2xl border border-pink-200/60 p-4 shadow-inner flex items-center justify-center">
           
-          {/* Lignes de connexion physiques requises par les règles */}
           <svg className="absolute inset-0 w-full h-full stroke-pink-200/80 stroke-[3px] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
             {/* Horizontales */}
             <line x1="16.66%" y1="16.66%" x2="83.33%" y2="16.66%" />
@@ -206,16 +218,24 @@ export default function FanoronTeloFront() {
         )}
 
         {/* Action Controls Footer */}
-        <div className="w-full grid grid-cols-2 gap-3 mt-6">
+        <div className="w-full grid grid-cols-3 gap-2 mt-6">
           <button
             onClick={handleUndo}
-            className="flex items-center justify-center gap-2 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 text-pink-600 font-bold py-2.5 px-4 rounded-xl transition-all shadow-sm border border-pink-100 text-sm"
+            className="flex flex-col items-center justify-center gap-1 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 text-pink-600 font-bold py-2 px-3 rounded-xl transition-all shadow-sm border border-pink-100 text-xs"
           >
             <Undo2 className="w-4 h-4" /> Annuler
           </button>
+          
+          <button
+            onClick={handleRedo}
+            className="flex flex-col items-center justify-center gap-1 bg-purple-50 hover:bg-purple-100 active:bg-purple-200 text-purple-600 font-bold py-2 px-3 rounded-xl transition-all shadow-sm border border-purple-100 text-xs"
+          >
+            <Redo2 className="w-4 h-4" /> Refaire
+          </button>
+          
           <button
             onClick={handleReset}
-            className="flex items-center justify-center gap-2 bg-linear-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold py-2.5 px-4 rounded-xl transition-all shadow-md text-sm"
+            className="flex flex-col items-center justify-center gap-1 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold py-2 px-3 rounded-xl transition-all shadow-md text-xs col-span-1"
           >
             <RotateCcw className="w-4 h-4" /> Reset
           </button>
