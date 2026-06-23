@@ -22,6 +22,7 @@ class FanoronTeloBoard:
         self.phase = 1
         self.pieces_placed = {1: 0, -1: 0}
         self.history = []  # Pour l'option Undo (Priorité 3)
+        self.redo_history = []  # Pour l'option Redo (Priorité 3)
 
     def copy(self):
         """Retourne une copie miroir indépendante (Crucial pour le Minimax)"""
