@@ -60,6 +60,8 @@ class GameRules:
         """Applique les règles de la Phase 2 (Anti-triche inclus)"""
         if board.phase != 2 or (src, dest) not in GameRules.get_legal_moves(board):
             return False
+        
+        board.redo_history.clear()  # On vide l'historique Redo après un nouveau coup
 
         # Sauvegarde pour l'historique
         board.history.append((list(board.grid), board.current_player, board.phase, dict(board.pieces_placed)))
@@ -72,11 +74,21 @@ class GameRules:
         if GameRules.check_winner(board) == 0:
             board.switch_player()
         return True
-
+    
     @staticmethod
     def undo(board: FanoronTeloBoard) -> bool:
-        """Annule le dernier coup joué"""
-        if not board.history:
-            return False
+        if not board.history: return False
+        # Avant d'annuler, on sauvegarde l'état actuel dans le Redo
+        board.redo_history.append((list(board.grid), board.current_player, board.phase, dict(board.pieces_placed)))
+        # On applique l'ancien état
         board.grid, board.current_player, board.phase, board.pieces_placed = board.history.pop()
+        return True
+
+    @staticmethod
+    def redo(board: FanoronTeloBoard) -> bool:
+        if not board.redo_history: return False
+        # Avant de rétablir, on remet l'état actuel dans l'Undo
+        board.history.append((list(board.grid), board.current_player, board.phase, dict(board.pieces_placed)))
+        # On applique l'état rétabli
+        board.grid, board.current_player, board.phase, board.pieces_placed = board.redo_history.pop()
         return True
