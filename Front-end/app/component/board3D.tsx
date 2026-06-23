@@ -88,9 +88,7 @@ export default function FanoronteloScene({ mode }: FanoronteloProps) {
 
     return (
         <div className="w-full h-screen bg-neutral-950">
-            {/* Correction de camera : position attend un tableau [X, Y, Z] */}
             <Canvas camera={{ position: [0, 12, 12], fov: 45 }}>
-                {/* 1. Lumière globale uniforme et intense */}
                 <ambientLight intensity={5} />
                 
                 {/* 2. Lumière du ciel (blanche) et du sol (teinte bois) pour déboucher les ombres */}
