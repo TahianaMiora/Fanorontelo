@@ -103,10 +103,12 @@ export default function GameApp() {
                         <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" value={aiConfig.iaX} onChange={(e) => setAiConfig({...aiConfig, iaX: e.target.value as Difficulty})}>
                           <option value="facile">Grenat : Facile</option>
                           <option value="moyen">Grenat : Moyen</option>
+                          <option value="difficile">Grenat : Difficile</option>
                         </select>
                         <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" value={aiConfig.iaO} onChange={(e) => setAiConfig({...aiConfig, iaO: e.target.value as Difficulty})}>
                           <option value="facile">Blanc : Facile</option>
                           <option value="moyen">Blanc : Moyen</option>
+                          <option value="difficile">Blanc : Difficile</option>
                         </select>
                       </>
                     )}
