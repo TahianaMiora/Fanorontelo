@@ -179,7 +179,37 @@ La détection d'un alignement gagnant (`WINNING_LINES`) évite l'utilisation de 
 Le calcul de la somme des valeurs des cases d'une ligne permet de déterminer instantanément le vainqueur :
 * $\sum (\text{Ligne}) = 3 \implies$ Victoire immédiate du Joueur 1 ($1 + 1 + 1$)
 * $\sum (\text{Ligne}) = -3 \implies$ Victoire immédiate du Joueur 2 ($-1 - 1 - 1$)
+### 2. Fonctionnement du Minimax et Définition de la Fonction d'Évaluation
 
+L'intelligence artificielle de notre moteur de jeu repose sur l'algorithme de décision classique **Minimax**. Cet algorithme modélise le jeu sous forme d'un arbre de décision où deux joueurs s'affrontent : le joueur **Maximisant** (l'IA, qui cherche à maximiser son gain) et le joueur **Minimisant** (l'adversaire, supposé jouer de manière optimale pour minimiser le score de l'IA).
+
+#### A. Architecture de l'Algorithme Minimax
+Notre implémentation suit une approche récursive avec une limite de profondeur fixe (`prof`) pour garantir des temps de réponse instantanés conformes aux exigences applicatives.
+
+1. **Condition d'arrêt (`is_terminal`) :** L'exploration de l'arbre s'arrête si la profondeur maximale est atteinte (`prof == 0`) ou si un état terminal est détecté (victoire d'un joueur ou situation de blocage/match nul sans coups légaux disponibles).
+2. **Phase de Simulation (`play`) :** À chaque nœud, l'IA génère les coups légaux (`GameRules.get_legal_moves`). Pour garantir la diversité du jeu et éviter un comportement déterministe linéaire, une opération de mélange aléatoire (`random.shuffle(coups)`) est injectée avant l'exploration. Le simulateur effectue une copie isolée du plateau (`board.copy()`) pour évaluer l'état futur sans altérer le cours réel de la partie.
+3. **Alternance des rôles :**
+    * **Maximiseur :** Initialisé à $-\infty$, il conserve la valeur la plus élevée parmi les simulations descendantes.
+    * **Minimiseur :** Initialisé à $+\infty$, il sélectionne la valeur la plus basse, simulant la meilleure contre-attaque adverse.
+
+#### B. Définition de la Fonction d'Évaluation Heuristique
+Lorsque l'algorithme ne peut pas explorer l'arbre jusqu'à la fin de la partie, la fonction `eval_heuristique` estime mathématiquement la "qualité" d'une configuration intermédiaire du plateau. Le score retourné est calculé selon trois niveaux de priorités :
+
+##### 1. États Absolus (Victoire / Défaite)
+Si l'état analysé mène à un alignement complet de 3 pions :
+* **$+1000$** si le vainqueur est le joueur maximisant.
+* **$-1000$** s'il s'agit d'une victoire adverse.
+
+##### 2. Contrôle Positionnel Stratégique (Le Centre)
+En Phase 2 (déplacement des pions), l'intersection centrale (index `4`) est la case la plus critique du Fanorona Telo en raison de sa connectivité maximale (liée aux 8 autres cases) :
+* **$+15$** si l'IA occupe le centre.
+* **$-15$** si l'adversaire occupe le centre.
+
+##### 3. Potentiel d'Alignement Combinatoire
+Pour chaque ligne de gain possible dans `WINNING_LINES`, l'heuristique évalue la configuration des forces en présence :
+* **Ligne sûre / Opportunité offensive :** Si une ligne contient uniquement des pions de l'IA et aucune pièce adverse (`pions_adv == 0`), le score augmente proportionnellement au nombre de pions présents ($\text{pionsJoueur} \times 5$) . Cela pousse l'IA à préparer des alignements de 2 pions.
+* **Danger défensif / Blocage :** Si une ligne contient des pions adverses mais aucun pion de l'IA (`pions_joueur == 0`), le score pénalise l'IA 
+$\text{pionsAdv} \times -5$, l'incitant à bloquer immédiatement les lignes où l'adversaire aligne déjà 2 pions.
 ## Section 6 : Comparaison des Performances (Minimax vs Alpha-Beta)
 
 Cette section présente une analyse comparative des performances entre l'algorithme Minimax classique et l'algorithme optimisé avec l'élagage Alpha-Beta. Les données ont été recueillies sur une simulation automatisée de 100 parties sans affichage graphique afin d'isoler l'efficacité algorithmique pure.
@@ -212,16 +242,16 @@ Cette configuration utilise des listes Python standards et des copies d'objets p
 
   ***Nombre de parties simulées :*** 100
   ***Distribution des résultats :*** Alpha-Beta (49.0%) | Minimax (51.0%)
-  ***Temps de réponse moyen Alpha-Beta :*** 6.2192 ms
-  ***Temps de réponse moyen Minimax :*** 75.4834 ms
+  ***Temps de réponse moyen Alpha-Beta :*** `6.2192 ms`
+  ***Temps de réponse moyen Minimax :*** `75.4834 ms`
 
 * **Seconde vesrion** : Représentation Bit à Bit (Bitboards) — *Configuration Optimisée*
 Cette implémentation repose sur le stockage de l'état du plateau sous forme d'entiers (9 bits) et valide les configurations via des opérations logiques bas niveau.
 
   ***Nombre de parties simulées :*** 100
   ***Distribution des résultats :*** Alpha-Beta (52.0%) | Minimax (48.0%)
-  ***Temps de réponse moyen Alpha-Beta :*** **0.0764 ms**
-  ***Temps de réponse moyen Minimax :*** **0.3643 ms**
+  ***Temps de réponse moyen Alpha-Beta :*** **`0.0764 ms`**
+  ***Temps de réponse moyen Minimax :*** **`0.3643 ms`**
 
 
 ---
