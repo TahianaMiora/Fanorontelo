@@ -214,7 +214,7 @@ export default function FanoronteloScene({ mode, config }: FanoronteloProps) {
 
   return (
     <div className="relative w-full h-screen bg-neutral-950 select-none text-neutral-200 overflow-hidden">
-      
+      <div/>
       <div className="bg-neutral-900/90 backdrop-blur-md px-6 py-3 shadow-2xl border-b border-amber-800/60 pointer-events-auto flex flex-col items-center w-full text-center z-20 absolute top-0">
           <h1 className="text-lg font-extrabold tracking-widest uppercase bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 bg-clip-text text-transparent flex items-center gap-2 drop-shadow-sm mb-1">
             Fanoron-telo <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />

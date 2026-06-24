@@ -21,7 +21,6 @@ export default function Pion({ position, joueur, statut, onClick }: PionProps) {
     finalColor = joueur === -1 ? "#555555" : "#4a0808"; // Version très assombrie
   }
   
-  // Utilise "pos" pour animer le tableau de coordonnées
   const { pos } = useSpring({
     pos: position,
     config: { 

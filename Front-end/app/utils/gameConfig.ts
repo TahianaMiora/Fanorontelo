@@ -15,11 +15,11 @@ export const GAME_MODES: Record<GameMode, ModeConfig> = {
   PvE: {
     title: 'Human vs AI',
     humanPlayers: 1,
-    isAiTurn: (currentPlayer) => currentPlayer === -1, // L'IA joue les blancs (-1)
+    isAiTurn: (currentPlayer) => currentPlayer === -1,
   },
   EvE: {
     title: 'AI vs Ai',
     humanPlayers: 0,
-    isAiTurn: () => true, // L'IA joue tout le temps
+    isAiTurn: () => true,
   }
 };
