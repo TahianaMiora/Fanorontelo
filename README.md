@@ -179,3 +179,25 @@ La détection d'un alignement gagnant (`WINNING_LINES`) évite l'utilisation de 
 Le calcul de la somme des valeurs des cases d'une ligne permet de déterminer instantanément le vainqueur :
 * $\sum (\text{Ligne}) = 3 \implies$ Victoire immédiate du Joueur 1 ($1 + 1 + 1$)
 * $\sum (\text{Ligne}) = -3 \implies$ Victoire immédiate du Joueur 2 ($-1 - 1 - 1$)
+
+## Section 6 : Comparaison des Performances (Minimax vs Alpha-Beta)
+
+Cette section présente une analyse comparative des performances entre l'algorithme Minimax classique et l'algorithme optimisé avec l'élagage Alpha-Beta. Les données ont été recueillies sur une simulation automatisée de 100 parties sans affichage graphique afin d'isoler l'efficacité algorithmique pure.
+
+### 1. Résultats du Benchmark Énergétique et Logique
+
+| Métrique Spécifiée | Minimax Classique | Élagage Alpha-Beta | Impact / Gain |
+| :--- | :---: | :---: | :---: |
+| **Nombre de parties jouées** | - | - | 100 parties |
+| **Taux de victoire (%)** | 49.0% | **51.0%** | Équilibre décisionnel (Hasard du shuffle) |
+| **Temps de réponse moyen** | 75.4834 ms | **6.2192 ms** | Réduction drastique de la latence |
+| **Efficacité algorithmique** | - | - | Optimisation majeure de l'arbre |
+
+### 2. Analyse Critique et Remarques Spécifiques
+
+* **Convergence Décisionnelle (49.0% vs 51.0%) :** Cette quasi-égalité démontre la cohérence mathématique des deux implémentations. À profondeur égale et avec la même fonction d'évaluation, l'Alpha-Beta et le Minimax prennent des décisions identiques. L'écart minimal de 2% est uniquement induit par l'aspect stochastique du tri des coups (`random.shuffle`), qui fait pencher le choix lors d'égalités strictes de scores heuristiques.
+* **Explosion du Gain Temporel (plus rapide) :** L'élagage Alpha-Beta surclasse drastiquement le Minimax classique en éliminant l'exploration des branches inutiles (coupes Alpha et Beta). Le temps de réponse moyen chute de **75.48 ms** à **6.22 ms**.
+* **Optimisation Applicative :** Avec un temps d'exécution moyen inférieur à 10 ms, l'Alpha-Beta garantit une fluidité totale de l'interface utilisateur. Cette marge de performance permet d'augmenter significativement la profondeur de recherche pour le niveau difficile (IA Difficile) sans impacter l'expérience de jeu.
+  
+### 3. Resultats :
+<![resultat obtenu](Benchmark.png)>
