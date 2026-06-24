@@ -71,7 +71,7 @@ Suivez ces 3 étapes simples pour lancer l'application en local :
 ```bash
 git clone <https://github.com/TahianaMiora/Fanorontelo>
 ```
-
+I - Lancement de back-end:
 - Pour aller dans le back-end:
 ```bash
 cd back-end
@@ -84,16 +84,18 @@ cd back-end
  ```bash
 python app.main ou uvacorn app.main:app
  ```
-II .
--Créer le fichier:
-```bash
-env.local
-```
-- Mettrez le fichier dedans:
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+II - Lancement de front-end
 - Pour aller dans front- end:
 ```bash
 cd front-end
+```
+-Créer le fichier:
+```bash
+.env.local
+```
+- Mettrez ceci dans .env.local:
+```bash
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 ```
 - Lancement de front-end:
 ```bash
