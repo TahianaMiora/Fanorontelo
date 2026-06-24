@@ -121,7 +121,7 @@ Pour ce hackathon , notre équipe a pleinement exploité la puissance des assist
 
 ---
 
-### 🛠️ Stratégie d'utilisation et gain d'efficience
+### Stratégie d'utilisation et gain d'efficience
 
 Plutôt que de déléguer la réflexion, nous avons ciblé l'utilisation de l'IA sur deux axes majeurs pour maximiser notre productivité :
 
@@ -138,14 +138,14 @@ Le débogage d'erreurs de syntaxe ou de configuration système peut bloquer un d
 
 ---
 
-### 💡 Plus-value humaine : Ce que l'équipe a pris en charge
+### Plus-value humaine : Ce que l'équipe a pris en charge
 
 L'IA ayant absorbé la charge de travail répétitive et le débogage de premier niveau, notre équipe de 7 personnes a pu investir son temps sur les aspects critiques et hautement mûris du projet :
 *   **L'analyse et l'optimisation mathématique** des règles spécifiques du Fanorona (gestion des captures *antso* et *taka*, et structure de la matrice du plateau).
 *   **La conception de l'architecture globale** et la sécurisation des flux de données entre le Front, les API et le moteur d'IA.
 *   **La logique décisionnelle** des différents niveaux d'intelligence artificielle (Facile, Moyen, Difficile, Avancé).
 
-> 📈 **Bilan d'impact :** Cette approche collaborative avec l'IA nous a permis d'accélérer notre cycle de développement d'environ 35%. L'IA n'a pas conçu le projet ; elle a nettoyé le chemin technique pour nous permettre de concevoir un système plus robuste et mieux optimisé.
+> **Bilan d'impact :** Cette approche collaborative avec l'IA nous a permis d'accélérer notre cycle de développement d'environ 35%. L'IA n'a pas conçu le projet ; elle a nettoyé le chemin technique pour nous permettre de concevoir un système plus robuste et mieux optimisé.
 
 ## Section 5 : Mélisation et algorithmes de l'IA su Jeu
 ### 1. Représentation de l'état du plateau (Structures de Données)
