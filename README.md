@@ -68,41 +68,45 @@ Un alignement valide est constitué de 3 pions de la même couleur occupant :
 ## Section 3 : Guide d'Installation Rapide (Local)
 
 Suivez ces 3 étapes simples pour lancer l'application en local :
-- Pour cloner le projet:
+- **Pour cloner le projet:**
 ```bash
-git clone <https://github.com/TahianaMiora/Fanorontelo>
+git clone https://github.com/TahianaMiora/Fanorontelo
 ```
-I - Lancement de back-end:
-- Pour aller dans le back-end:
+### **I - Lancement de back-end:**
+**- Pour aller dans le back-end:**
 ```bash
 cd back-end
 ```
-- Installation de requiremts-text:
-  ```bash
-    pip install -r requirements.txt
-  ```
-- Lancement de serveur ( back-end)
+**- Installation de requiremts-text:**
+```bash
+  pip install -r requirements.txt
+```
+**- Lancement de serveur ( back-end)**
+```bash
+   python app.main 
+```
+ou 
  ```bash
-python app.main ou uvacorn app.main:app
+   uvacorn app.main:app 
  ```
-II - Lancement de front-end
-- Pour aller dans front- end:
+### **II - Lancement de front-end**
+**- Pour aller dans front- end:**
 ```bash
 cd front-end
 ```
--Créer le fichier:
+**-Créer le fichier:**
 ```bash
 .env.local
 ```
-- Mettrez ceci dans .env.local:
+**- Mettrez ceci dans .env.local:**
 ```bash
 NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 ```
-- Lancement de front-end:
+**- Lancement de front-end:**
 ```bash
 npm run dev
 ```
-III - Pour lancer et accéder à votre projet:
+### **III - Pour lancer et accéder au projet:**
 ```bash
 http://localhost:3000
 ```
