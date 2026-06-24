@@ -51,10 +51,14 @@ Un alignement valide est constitué de 3 pions de la même couleur occupant :
 * Une ligne complète 
 * Une colonne complète 
 * Une diagonale complète 
+
+### **Note importante:** 
+    Aucune rège n'a été mentionné pour le nombre de mouvement authorisés des pièces
+
   
 
 ### Stack technologique
-* *Back-end :** Python
+* **Back-end :** Python
 * **Front-end:** NextJS
 * **Déploiement / Hébergement :** [Fanorona](https:localhost)
 
