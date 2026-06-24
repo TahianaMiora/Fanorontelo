@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import FanoronteloScene from "./board3D";
@@ -8,7 +8,6 @@ import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { GAME_MODES, GameMode } from "../utils/gameConfig";
 
-// Types pour la configuration IA
 type Difficulty = "facile" | "moyen" | "difficile";
 interface AIConfig {
   iaX: Difficulty;
@@ -39,6 +38,19 @@ export default function GameApp() {
   const [mode, setMode] = useState<GameMode | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [aiConfig, setAiConfig] = useState<AIConfig>({ iaX: "moyen", iaO: "moyen" });
+  
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Fermer le menu au clic extérieur
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMode(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   if (!gameStarted) {
     return (
@@ -56,28 +68,29 @@ export default function GameApp() {
             </h1>
 
             {(Object.keys(GAME_MODES) as GameMode[]).map((m) => (
-              <div key={m} className="mb-4 flex flex-col items-center">
+              <div key={m} ref={mode === m ? menuRef : null} className="relative mb-4 flex flex-col items-center">
                 <button
-                  onClick={() => setMode(m === mode ? null : m)}
+                  onClick={() => {
+                    setMode(m === mode ? null : m);
+                    
+                    if (m === "PvP") {
+                      setGameStarted(true);
+                    }
+                  }}
                   className={`w-72 py-4 text-xl font-semibold rounded transition-all duration-300 ${
                     m === "EvE"
-                      ? mode === m 
-                        ? "bg-neutral-600 text-white border border-neutral-400" // Actif (sélectionné)
-                        : "bg-neutral-800/60 text-neutral-300 border border-neutral-600/80 hover:bg-neutral-700" // Inactif (gris)
-                      : mode === m 
-                        ? "bg-amber-700 text-white border border-amber-500" // Actif (sélectionné)
-                        : "bg-amber-900/50 text-amber-50 border border-amber-700/80 hover:bg-amber-800" // Inactif (ambre)
+                      ? mode === m ? "bg-neutral-600 text-white border border-neutral-400" : "bg-neutral-800/60 text-neutral-300 border border-neutral-600/80 hover:bg-neutral-700"
+                      : mode === m ? "bg-amber-700 text-white border border-amber-500" : "bg-amber-900/50 text-amber-50 border border-amber-700/80 hover:bg-amber-800"
                   }`}
-                  >
+                >
                   {GAME_MODES[m].title}
-                  </button>
+                </button>
 
-                {/* Menu déroulant interne */}
                 {mode === m && (
-                  <div className="mt-2 p-4 bg-neutral-800/90 rounded-lg border border-amber-900/50 w-72 flex flex-col gap-3">
+                  <div className="absolute left-full top-0 ml-4 z-50 p-4 bg-neutral-800/90 rounded-lg border border-amber-900/50 w-72 flex flex-col gap-3 shadow-2xl">
                     {m === "PvE" && (
                       <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" 
-                      value={aiConfig.iaO}
+                        value={aiConfig.iaO}
                         onChange={(e) => setAiConfig({...aiConfig, iaO: e.target.value as Difficulty})}>
                         <option value="facile">IA : Facile</option>
                         <option value="moyen">IA : Moyen</option>
@@ -86,17 +99,13 @@ export default function GameApp() {
                     )}
                     {m === "EvE" && (
                       <>
-                        <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" 
-                          value={aiConfig.iaX}
-                          onChange={(e) => setAiConfig({...aiConfig, iaX: e.target.value as Difficulty})}>
-                          <option value="facile">Grenat (X) : Facile</option>
-                          <option value="moyen">Grenat (X) : Moyen</option>
+                        <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" value={aiConfig.iaX} onChange={(e) => setAiConfig({...aiConfig, iaX: e.target.value as Difficulty})}>
+                          <option value="facile">Grenat : Facile</option>
+                          <option value="moyen">Grenat : Moyen</option>
                         </select>
-                        <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" 
-                          value={aiConfig.iaO}
-                          onChange={(e) => setAiConfig({...aiConfig, iaO: e.target.value as Difficulty})}>
-                          <option value="facile">Blanc (O) : Facile</option>
-                          <option value="moyen">Blanc (O) : Moyen</option>
+                        <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" value={aiConfig.iaO} onChange={(e) => setAiConfig({...aiConfig, iaO: e.target.value as Difficulty})}>
+                          <option value="facile">Blanc : Facile</option>
+                          <option value="moyen">Blanc : Moyen</option>
                         </select>
                       </>
                     )}
@@ -115,7 +124,7 @@ export default function GameApp() {
       </div>
     );
   }
- console.log(aiConfig)
+
   return (
     <div className="relative w-full h-screen font-sans">
       <button 
@@ -125,11 +134,7 @@ export default function GameApp() {
         ← Quitter
       </button>
 
-      <FanoronteloScene 
-        mode={mode!} 
-        config={GAME_MODES[mode!]}
-        aiConfig={aiConfig}
-      />
+      <FanoronteloScene mode={mode!} config={GAME_MODES[mode!]} aiConfig={aiConfig} />
     </div>
   );
 }

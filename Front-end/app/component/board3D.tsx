@@ -57,7 +57,8 @@ interface PieceData {
 
 export default function FanoronteloScene({ mode, config, aiConfig }: FanoronteloProps) {
   console.log(mode, aiConfig)
-  const API_URL = "http://127.0.0.1:8000/api";
+  // const API_URL = "http://127.0.0.1:8000/api";
+  const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [selectedSrc, setSelectedSrc] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
