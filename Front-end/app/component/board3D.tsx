@@ -38,7 +38,7 @@ function TableBois() {
   );
 }
 
-interface FanoronteloProps { mode: GameMode, config: ModeConfig }
+interface FanoronteloProps { mode: GameMode, config: ModeConfig, aiConfig: { iaX: string, iaO: string }}
 
 interface GameState {
   grid: number[];
@@ -55,23 +55,28 @@ interface PieceData {
   index: number;
 }
 
-export default function FanoronteloScene({ mode, config }: FanoronteloProps) {
+export default function FanoronteloScene({ mode, config, aiConfig }: FanoronteloProps) {
+  console.log(mode, aiConfig)
   // const API_URL = "http://127.0.0.1:8000/api";
-  
   const API_URL = `${process.env.NEXT_PUBLIC_API_URL}api`;
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [selectedSrc, setSelectedSrc] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pieces, setPieces] = useState<PieceData[]>([]);
+  const [isLoading, setIsLoading] = useState(true); // Bloque l'affichage au début
+  
+  
 
   // 1. Initialisation de la partie
   useEffect(() => {
     const initializeGame = async () => {
       try {
         const res = await fetch(`${API_URL}/reset`, { method: "POST" });
+        console.log(gameState)
         const data = await res.json();
         setGameState(data);
         setError(null);
+        setIsLoading(false)
       } catch (err) {
         setError("Impossible de réinitialiser. Le Back-end est-il bien allumé ? 🪵");
       }
@@ -98,6 +103,7 @@ export default function FanoronteloScene({ mode, config }: FanoronteloProps) {
           availablePrev.splice(matchIdx, 1);
         } else {
           matchIdx = availablePrev.findIndex(p => p.joueur === joueur);
+          const count = pieces.filter((element) => element.id.startsWith('pion${joueur}')).length
           
           if (matchIdx !== -1) {
             newPieces.push({ ...availablePrev[matchIdx], index });
@@ -203,20 +209,58 @@ export default function FanoronteloScene({ mode, config }: FanoronteloProps) {
 
 
   useEffect(() => {
-    if (gameState && config.isAiTurn(gameState.current_player)) {
+    if (!gameState || gameState.winner !== 0) return;
+  
+    const isAiTurn = config?.isAiTurn(gameState.current_player);
+    
+    if (isAiTurn) {
       const timer = setTimeout(async () => {
-        //--------------------------------------- AI -------------------------------------------------
-        alert('AI')
-      }, mode === 'EvE' ? 300 : 1000); // Mode démo plus rapide
-      
+        try {
+          let response;
+          
+          if (mode === 'EvE') {
+            response = await fetch(`${API_URL}/ai-vs-ai`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ level_ia_x: aiConfig.iaX, level_ia_o: aiConfig.iaO }),
+            });
+          } else {
+            response = await fetch(`${API_URL}/ai-move?niveau=${aiConfig.iaO}`, {
+              method: "POST"
+            });
+          }
+  
+          if (!response.ok) throw new Error("Erreur lors du tour de l'IA");
+          
+          const data = await response.json();
+          setGameState(data);
+          setError(null);
+        } catch (err: any) {
+          setError("Erreur IA: " + err.message);
+        }
+      }, 1000);
+  
       return () => clearTimeout(timer);
     }
-  }, [gameState?.current_player, mode]);
+  }, [gameState?.current_player, gameState?.winner, mode, config]);
+console.log('winner :', gameState?.winner)
 
+if (isLoading) {
+  return (    
+  <div className="relative w-full h-screen bg-neutral-950 select-none text-neutral-200 overflow-hidden">
+    <div className="bg-neutral-900/90 backdrop-blur-md px-6 py-3 shadow-2xl border-b border-amber-800/60 pointer-events-auto flex flex-col items-center w-full text-center z-20 absolute top-0">
+        <h1 className="text-lg font-extrabold tracking-widest uppercase bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 bg-clip-text text-transparent flex items-center gap-2 drop-shadow-sm mb-1">
+          Fanoron-telo <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
+        </h1>
+        <h2>... Chargement </h2>
+    </div>
+  </div>
 
+  ); 
+}
+console.log('isLoading : ', isLoading)
   return (
     <div className="relative w-full h-screen bg-neutral-950 select-none text-neutral-200 overflow-hidden">
-      <div/>
       <div className="bg-neutral-900/90 backdrop-blur-md px-6 py-3 shadow-2xl border-b border-amber-800/60 pointer-events-auto flex flex-col items-center w-full text-center z-20 absolute top-0">
           <h1 className="text-lg font-extrabold tracking-widest uppercase bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 bg-clip-text text-transparent flex items-center gap-2 drop-shadow-sm mb-1">
             Fanoron-telo <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
@@ -241,17 +285,17 @@ export default function FanoronteloScene({ mode, config }: FanoronteloProps) {
         </div>
 
         {/* NOUVEAU : Message de victoire en plein milieu de l'écran */}
-        {gameState?.winner !== 0 && (
+        {(gameState?.winner !== 0 || gameState.winner == undefined) && (
           <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
             {/* L'arrière plan sombre */}
             <div className="absolute inset-0 bg-neutral-950/40 backdrop-blur-[2px] transition-all duration-1000"></div>
             
             {/* La carte de victoire animée */}
             <div className="relative bg-neutral-900/90 border border-amber-500/50 p-10 rounded-3xl shadow-[0_0_80px_rgba(245,158,11,0.2)] text-center animate-bounce duration-[2000ms]">
-              <h2 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-amber-300 via-orange-500 to-red-600 drop-shadow-xl uppercase tracking-widest">
+              <h2 className="text-2xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-amber-300 via-orange-500 to-red-600 drop-shadow-xl uppercase tracking-widest">
                 {gameState?.winner === 1 ? "Grenat" : "Blanc"}
               </h2>
-              <div className="text-2xl font-bold text-amber-200 mt-4 tracking-widest uppercase">
+              <div className="text-xl font-bold text-amber-200 mt-4 tracking-widest uppercase">
                 Remporte la victoire !
               </div>
             </div>
