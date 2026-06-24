@@ -88,7 +88,7 @@ export default function GameApp() {
                 </button>
 
                 {mode === m && (
-                  <div className="absolute md:left-full top-0 ml-4 z-50 p-4 bg-neutral-800/90 rounded-lg border border-amber-900/50 w-72 flex flex-col gap-3 shadow-2xl">
+                  <div className="absolute md:left-full md:top-0 md:ml-4 z-50 p-4 bg-neutral-800/90 rounded-lg border border-amber-900/50 w-72 flex flex-col gap-3 shadow-2xl">
                     {m === "PvE" && (
                       <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" 
                         value={aiConfig.iaO}
