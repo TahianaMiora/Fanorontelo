@@ -87,7 +87,7 @@ cd back-end
 ```
 ou 
  ```bash
-   uvicorn app.main:app 
+   uvacorn app.main:app 
  ```
 ### **II - Lancement de front-end**
 **- Pour aller dans front- end:**
@@ -146,3 +146,36 @@ L'IA ayant absorbé la charge de travail répétitive et le débogage de premier
 *   **La logique décisionnelle** des différents niveaux d'intelligence artificielle (Facile, Moyen, Difficile, Avancé).
 
 > 📈 **Bilan d'impact :** Cette approche collaborative avec l'IA nous a permis d'accélérer notre cycle de développement d'environ 35%. L'IA n'a pas conçu le projet ; elle a nettoyé le chemin technique pour nous permettre de concevoir un système plus robuste et mieux optimisé.
+
+## Section 5 : Mélisation et algorithmes de l'IA su Jeu
+### 1. Représentation de l'état du plateau (Structures de Données)
+
+Pour modéliser le plateau du **Fanorona Telo** ($3 \times 3$), notre architecture utilise des structures de données contiguës et statiques hautement optimisées. Cette approche permet des transitions d'états instantanées, cruciales pour l'exploration rapide de l'arbre des coups par l'algorithme Minimax.
+
+#### A. Encodage numérique de la grille
+Le plateau de jeu est représenté par une structure unidimensionnelle aplatie (un tableau ou une liste Python de taille 9) :
+* **Structure :** `self.grid = [0] * 9`
+* **Indexation :** Les cases sont cartographiées de `0` à `8`, associant chaque ligne à un bloc de 3 éléments successifs :
+    * Ligne supérieure : indices `0, 1, 2`
+    * Ligne médiane : indices `3, 4, 5`
+    * Ligne inférieure : indices `6, 7, 8`
+
+L'état des intersections est encodé de manière purement algébrique :
+* `0` : Intersection vacante.
+* `1` : Pion appartenant au **Joueur 1 (X)**.
+* `-1` : Pion appartenant au **Joueur 2 (O)**.
+
+#### B. Modélisation topologique des connexions (Lignes orthogonales et diagonales)
+Le Fanorona possède une contrainte géométrique forte : le déplacement diagonal n'est autorisé que depuis les intersections dites "fortes". Plutôt que de recalculer dynamiquement ces contraintes à chaque tour (ce qui ralentirait l'IA), nous avons figé la topologie du plateau dans une **liste d'adjacence statique** (`ADJACENCY_LIST`) :
+
+* **Intersections Faibles (indices impairs `1, 3, 5, 7`) :** Limitées à leurs voisins directs orthogonaux (cardinaux), restreignant le nombre de mouvements possibles.
+* **Intersections Fortes (les 4 coins `0, 2, 6, 8` et le centre `4`) :** Offrent une connectivité élargie incluant les directions diagonales. L'index central `4` est ainsi nativement interconnecté avec l'intégralité des 8 autres cases du plateau.
+
+Cette modélisation permet de valider la légalité d'un déplacement en temps constant (`O(1)`) via une simple vérification d'appartenance : `dest in ADJACENCY_LIST[src]`.
+
+#### C. Optimisation arithmétique des conditions de victoire
+La détection d'un alignement gagnant (`WINNING_LINES`) évite l'utilisation de boucles géométriques complexes grâce à l'évaluation arithmétique directe des 8 vecteurs de gains possibles (3 horizontaux, 3 verticaux, 2 diagonaux). 
+
+Le calcul de la somme des valeurs des cases d'une ligne permet de déterminer instantanément le vainqueur :
+* $\sum (\text{Ligne}) = 3 \implies$ Victoire immédiate du Joueur 1 ($1 + 1 + 1$)
+* $\sum (\text{Ligne}) = -3 \implies$ Victoire immédiate du Joueur 2 ($-1 - 1 - 1$)
