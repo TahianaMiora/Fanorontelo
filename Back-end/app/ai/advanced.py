@@ -1,7 +1,7 @@
 import math
 import time
 import random
-import alpha_beta as ab
+import app.ai.alpha_beta as ab
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import random
@@ -117,7 +117,7 @@ if __name__ == "__main__":
             tour_ia_1 = True
 
         plateau.display_board()
-        # time.sleep(1) 
+        time.sleep(1)
 
     winner = GameRules.check_winner(plateau)
     if winner != 0:
