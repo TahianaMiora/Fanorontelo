@@ -87,7 +87,7 @@ cd back-end
 ```
 ou 
  ```bash
-   uvacorn app.main:app 
+   uvicorn app.main:app 
  ```
 ### **II - Lancement de front-end**
 **- Pour aller dans front- end:**
