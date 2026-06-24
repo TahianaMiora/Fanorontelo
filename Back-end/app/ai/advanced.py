@@ -117,7 +117,7 @@ if __name__ == "__main__":
             tour_ia_1 = True
 
         plateau.display_board()
-        time.sleep(1)
+        # time.sleep(1) 
 
     winner = GameRules.check_winner(plateau)
     if winner != 0:
