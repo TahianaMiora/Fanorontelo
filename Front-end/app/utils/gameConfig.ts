@@ -18,7 +18,7 @@ export const GAME_MODES: Record<GameMode, ModeConfig> = {
     isAiTurn: (currentPlayer) => currentPlayer === -1,
   },
   EvE: {
-    title: 'AI vs Ai',
+    title: 'Demo : AI vs AI',
     humanPlayers: 0,
     isAiTurn: () => true,
   }

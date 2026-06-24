@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas, useLoader } from "@react-three/fiber";
+import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import { OrbitControls, Sparkles as Sparkles3D } from "@react-three/drei";
 import { TextureLoader } from "three";
 import { useEffect, useState } from "react";
@@ -203,7 +203,23 @@ export default function FanoronteloScene({ mode, config, aiConfig }: Fanorontelo
     config: { mass: 3, tension: 40, friction: 15 },
   });
 
-
+  const CameraAdjustment = () => {
+    const { camera } = useThree();
+  
+    useEffect(() => {
+      const isMobile = window.innerWidth < 768;
+      // On éloigne la caméra en mobile pour voir l'ensemble
+      // Ajuste [x, y, z] selon tes besoins
+      if (isMobile) {
+        camera.position.set(0, 18, 18); 
+      } else {
+        camera.position.set(0, 12, 12);
+      }
+      camera.updateProjectionMatrix();
+    }, [camera]);
+  
+    return null;
+  };
   useEffect(() => {
     if (!gameState || gameState.winner !== 0) return;
   
@@ -258,7 +274,7 @@ export default function FanoronteloScene({ mode, config, aiConfig }: Fanorontelo
     <div className="relative w-full h-screen bg-neutral-950 select-none text-neutral-200 overflow-hidden">
       <div className="bg-neutral-900/90 backdrop-blur-md px-6 py-3 shadow-2xl border-b border-amber-800/60 pointer-events-auto flex flex-col items-center w-full text-center z-20 absolute top-0">
           <h1 className="text-lg font-extrabold tracking-widest uppercase bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 bg-clip-text text-transparent flex items-center gap-2 drop-shadow-sm mb-1">
-            Fanoron-telo <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
+            Fanorontelo <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
           </h1>
           
           {gameState && (
@@ -332,6 +348,7 @@ export default function FanoronteloScene({ mode, config, aiConfig }: Fanorontelo
 
       {/* 2. Rendu Canvas 3D */}
       <Canvas camera={{ position: [0, 12, 12], fov: 45 }}>
+        <CameraAdjustment />
         <ambientLight intensity={5} />
         <hemisphereLight args={["#ffffff", "#3a2512", 1.5]} />
         <directionalLight position={[8, 15, 8]} intensity={2.5} castShadow />
