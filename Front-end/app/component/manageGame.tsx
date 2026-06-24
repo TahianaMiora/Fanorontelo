@@ -63,8 +63,8 @@ export default function GameApp() {
         </div>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-          <div className="flex flex-col items-center p-10 rounded-2xl bg-neutral-900/80 backdrop-blur-md border-2 border-amber-800 shadow-[0_0_50px_rgba(180,83,9,0.2)]">
-            <h1 className="text-2xl md:text-6xl font-bold text-amber-500 mb-8 tracking-widest uppercase drop-shadow-lg">
+          <div className="flex flex-col items-center p-5 md:p-10 rounded-2xl bg-neutral-900/80 backdrop-blur-md border-2 border-amber-800 shadow-[0_0_50px_rgba(180,83,9,0.2)]">
+            <h1 className="text-2xl md:text-4xl font-bold text-amber-500 mb-8 tracking-widest uppercase drop-shadow-lg">
               Fanorontelo
             </h1>
 

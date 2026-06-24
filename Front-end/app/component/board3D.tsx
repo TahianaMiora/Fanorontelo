@@ -56,23 +56,19 @@ interface PieceData {
 }
 
 export default function FanoronteloScene({ mode, config, aiConfig }: FanoronteloProps) {
-  console.log(mode, aiConfig)
   // const API_URL = "http://127.0.0.1:8000/api";
   const API_URL = `${process.env.NEXT_PUBLIC_API_URL}api`;
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [selectedSrc, setSelectedSrc] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pieces, setPieces] = useState<PieceData[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Bloque l'affichage au début
+  const [isLoading, setIsLoading] = useState(true);
   
-  
-
   // 1. Initialisation de la partie
   useEffect(() => {
     const initializeGame = async () => {
       try {
         const res = await fetch(`${API_URL}/reset`, { method: "POST" });
-        console.log(gameState)
         const data = await res.json();
         setGameState(data);
         setError(null);
@@ -243,22 +239,21 @@ export default function FanoronteloScene({ mode, config, aiConfig }: Fanorontelo
       return () => clearTimeout(timer);
     }
   }, [gameState?.current_player, gameState?.winner, mode, config]);
-console.log('winner :', gameState?.winner)
 
-if (isLoading) {
-  return (    
-  <div className="relative w-full h-screen bg-neutral-950 select-none text-neutral-200 overflow-hidden">
-    <div className="bg-neutral-900/90 backdrop-blur-md px-6 py-3 shadow-2xl border-b border-amber-800/60 pointer-events-auto flex flex-col items-center w-full text-center z-20 absolute top-0">
-        <h1 className="text-lg font-extrabold tracking-widest uppercase bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 bg-clip-text text-transparent flex items-center gap-2 drop-shadow-sm mb-1">
-          Fanoron-telo <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
-        </h1>
-        <h2>... Chargement </h2>
+  if (isLoading) {
+    return (    
+    <div className="relative w-full h-screen bg-neutral-950 select-none text-neutral-200 overflow-hidden">
+      <div className="bg-neutral-900/90 backdrop-blur-md px-6 py-3 shadow-2xl border-b border-amber-800/60 pointer-events-auto flex flex-col items-center w-full text-center z-20 absolute top-0">
+          <h1 className="text-lg font-extrabold tracking-widest uppercase bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 bg-clip-text text-transparent flex items-center gap-2 drop-shadow-sm mb-1">
+            Fanoron-telo <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
+          </h1>
+          <h2>... Chargement </h2>
+      </div>
     </div>
-  </div>
 
-  ); 
-}
-console.log('isLoading : ', isLoading)
+    ); 
+  }
+
   return (
     <div className="relative w-full h-screen bg-neutral-950 select-none text-neutral-200 overflow-hidden">
       <div className="bg-neutral-900/90 backdrop-blur-md px-6 py-3 shadow-2xl border-b border-amber-800/60 pointer-events-auto flex flex-col items-center w-full text-center z-20 absolute top-0">
