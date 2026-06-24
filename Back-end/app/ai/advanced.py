@@ -73,8 +73,10 @@ def calculer_coup_ia(board: FanoronTeloBoard, est_max: bool, niveau: str = "moye
 
     if niveau == "facile":
         prof = 1 if board.phase == 1 else 3
+    elif niveau == "difficile":
+        prof = 4 if board.phase == 1 else 9
     else:  # moyen
-        prof = 3 if board.phase == 1 else 4
+        prof = 3 if board.phase == 1 else 5
 
     adapter = AdapterPlateau(board)
     _, meilleur_coup = ab.alpha_beta(adapter, profondeur=prof, alpha=-math.inf, beta=math.inf, est_maximisant=est_max)
@@ -89,11 +91,13 @@ if __name__ == "__main__":
     print("=== MODE DÉMO FANORON-TELO : IA 1 (X) VS IA 2 (O) ===")
     plateau.display_board()
     tour_ia_1 = True
-
+    nombre_de_coups = 0
     while GameRules.check_winner(plateau) == 0 and len(GameRules.get_legal_moves(plateau)) > 0:
+        nombre_de_coups += 1
+        print(f"\n--- Tour {nombre_de_coups} ---")
         if tour_ia_1:
             print("IA 1 (X) calcule...")
-            coup = calculer_coup_ia(plateau, est_max=True)
+            coup = calculer_coup_ia(plateau, est_max=True, niveau="difficile")
             if plateau.phase == 1:
                 print(f"IA 1 place un 'X' en case {coup}")
                 GameRules.place_piece(plateau, coup)
@@ -103,7 +107,7 @@ if __name__ == "__main__":
             tour_ia_1 = False
         else:
             print("IA 2 (O) calcule...")
-            coup = calculer_coup_ia(plateau, est_max=False)
+            coup = calculer_coup_ia(plateau, est_max=False, niveau="moyen")
             if plateau.phase == 1:
                 print(f"IA 2 place un 'O' en case {coup}")
                 GameRules.place_piece(plateau, coup)
@@ -118,5 +122,6 @@ if __name__ == "__main__":
     winner = GameRules.check_winner(plateau)
     if winner != 0:
         print(f"Résultat : Victoire de {'X' if winner==1 else 'O'} !")
+        print(f"Nombre de coups joués : {nombre_de_coups}")
     else:
         print("Résultat : Match nul ou situation bloquée !")

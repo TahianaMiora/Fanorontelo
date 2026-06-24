@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Union, Tuple
 from app.core.board import FanoronTeloBoard
 from app.core.game_rules import GameRules
+from app.ai.advanced import calculer_coup_ia
 
 router = APIRouter()
 
@@ -15,6 +16,11 @@ class MoveRequest(BaseModel):
     # En phase 1: un entier (ex: 4) : position du pion à placer
     # En phase 2: un tuple/liste de 2 entiers (ex: [0, 4]) : [source, destination] du pion à déplacer
     move: Union[int, Tuple[int, int]]
+
+# Modèle de configuration pour le mode IA vs IA ou choix de difficulté
+class AIConfigRequest(BaseModel):
+    level_ia_x: str = "facile"  # "facile", "moyen", "difficile"
+    level_ia_o: str = "moyen"   # "facile", "moyen", "difficile"
 
 @router.get("/state")
 def get_game_state():
@@ -48,6 +54,61 @@ def play_move(request: MoveRequest):
 
     if not success:
         raise HTTPException(status_code=400, detail="Coup invalide ou non autorisé par les règles.")
+
+    return get_game_state()
+
+@router.post("/ai-move")
+def play_ai_move(niveau: str = "moyen"):
+    """
+    Exécute le coup de l'IA pour le joueur actuel (Mode Joueur vs IA).
+    """
+    # Vérification si la partie est déjà terminée
+    if GameRules.check_winner(current_game) != 0 or not GameRules.get_legal_moves(current_game):
+        raise HTTPException(status_code=400, detail="La partie est terminée. Impossible de faire jouer l'IA.")
+
+    # Déterminer si l'IA en cours doit maximiser ou non
+    est_max = (current_game.current_player == 1)
+
+    # Calcul du coup
+    coup = calculer_coup_ia(current_game, est_max=est_max, niveau=niveau)
+    if coup is None:
+        raise HTTPException(status_code=400, detail="L'IA n'a trouvé aucun coup légal.")
+
+    # Application du coup calculé
+    if current_game.phase == 1:
+        GameRules.place_piece(current_game, coup)
+    else:
+        GameRules.move_piece(current_game, coup[0], coup[1])
+
+    return get_game_state()
+
+@router.post("/ai-vs-ai")
+def play_ai_vs_ai_step(config: AIConfigRequest):
+    """
+    Exécute un unique coup automatique (IA vs IA) sur la partie globale 
+    en fonction du tour du joueur actuel et des difficultés configurées.
+    """
+    # Vérification si la partie est finie
+    if GameRules.check_winner(current_game) != 0 or not GameRules.get_legal_moves(current_game):
+        raise HTTPException(status_code=400, detail="La partie est terminée ou bloquée.")
+
+    # Sélection de la configuration selon le joueur actif
+    if current_game.current_player == 1:
+        est_max = True
+        niveau_actuel = config.level_ia_x
+    else:
+        est_max = False
+        niveau_actuel = config.level_ia_o
+
+    # Calcul et application du coup de l'IA désignée
+    coup = calculer_coup_ia(current_game, est_max=est_max, niveau=niveau_actuel)
+    if coup is None:
+        raise HTTPException(status_code=400, detail="Aucun coup valide trouvé par l'IA.")
+
+    if current_game.phase == 1:
+        GameRules.place_piece(current_game, coup)
+    else:
+        GameRules.move_piece(current_game, coup[0], coup[1])
 
     return get_game_state()
 
