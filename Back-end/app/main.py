@@ -3,7 +3,6 @@ import sys
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 # Gestion sécurisée du chemin pour les modules locaux
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -22,6 +21,9 @@ app.add_middleware(
 
 # Inclusion des routes du jeu
 app.include_router(api_router, prefix="/api")
+@app.get("/")
+def read_root():
+    return "Le serveur de Nexus vous passe le bonjour!!!"
 
 if __name__ == "__main__":
     import uvicorn
