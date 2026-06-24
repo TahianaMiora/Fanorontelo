@@ -4,11 +4,13 @@ import { Text } from "@react-three/drei";
 import * as THREE from "three";
 
 interface grilleProps {
-  joueur: -1 | 1;
+  joueur: number;
   onClickPoint: (index: number) => void; 
 }
 
-export default function GrilleFanorontelo({joueur, onClickPoint}: grilleProps) {
+export default function GrilleFanorontelo({joueur, 
+  onClickPoint
+}: grilleProps) {
 
   const taille = 4.2
   const points: [number, number, number][] = [

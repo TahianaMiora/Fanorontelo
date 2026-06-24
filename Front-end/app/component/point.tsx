@@ -1,5 +1,5 @@
 interface PionProps {
-  joueur: -1 | 1;
+  joueur: number;
   statut: "selectionne" | "actif" | "sombre";
   onClick: () => void;
   position: [number, number, number];

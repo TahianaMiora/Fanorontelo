@@ -91,7 +91,7 @@ export default function GameApp() {
       {/* Bouton pour quitter la partie et revenir au menu */}
       <button 
         onClick={() => setMode(null)}
-        className="absolute top-6 left-6 z-10 px-5 py-2 font-serif text-amber-100 bg-neutral-900/80 backdrop-blur-sm border border-amber-800 rounded-md shadow-lg hover:bg-red-900 hover:border-red-500 transition-colors duration-300"
+        className="absolute top-6 left-6 z-30 px-5 py-2 font-serif text-amber-100 bg-neutral-900/80 backdrop-blur-sm border border-amber-800 rounded-md shadow-lg hover:bg-red-900 hover:border-red-500 transition-colors duration-300"
       >
         ← Quitter la partie
       </button>
