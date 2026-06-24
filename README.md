@@ -147,7 +147,7 @@ L'IA ayant absorbé la charge de travail répétitive et le débogage de premier
 
 > **Bilan d'impact :** Cette approche collaborative avec l'IA nous a permis d'accélérer notre cycle de développement d'environ 35%. L'IA n'a pas conçu le projet ; elle a nettoyé le chemin technique pour nous permettre de concevoir un système plus robuste et mieux optimisé.
 
-## Section 5 : Mélisation et algorithmes de l'IA su Jeu
+## Section 5 : Modélisation et algorithmes de l'IA su Jeu
 ### 1. Représentation de l'état du plateau (Structures de Données)
 
 Pour modéliser le plateau du **Fanorona Telo** ($3 \times 3$), notre architecture utilise des structures de données contiguës et statiques hautement optimisées. Cette approche permet des transitions d'états instantanées, cruciales pour l'exploration rapide de l'arbre des coups par l'algorithme Minimax.
@@ -184,7 +184,7 @@ Le calcul de la somme des valeurs des cases d'une ligne permet de déterminer in
 
 Cette section présente une analyse comparative des performances entre l'algorithme Minimax classique et l'algorithme optimisé avec l'élagage Alpha-Beta. Les données ont été recueillies sur une simulation automatisée de 100 parties sans affichage graphique afin d'isoler l'efficacité algorithmique pure.
 
-### 1. Résultats du Benchmark Énergétique et Logique
+### 1. Résultats du Benchmark 
 
 | Métrique Spécifiée | Minimax Classique | Élagage Alpha-Beta | Impact / Gain |
 | :--- | :---: | :---: | :---: |
@@ -199,5 +199,51 @@ Cette section présente une analyse comparative des performances entre l'algorit
 * **Explosion du Gain Temporel (plus rapide) :** L'élagage Alpha-Beta surclasse drastiquement le Minimax classique en éliminant l'exploration des branches inutiles (coupes Alpha et Beta). Le temps de réponse moyen chute de **75.48 ms** à **6.22 ms**.
 * **Optimisation Applicative :** Avec un temps d'exécution moyen inférieur à 10 ms, l'Alpha-Beta garantit une fluidité totale de l'interface utilisateur. Cette marge de performance permet d'augmenter significativement la profondeur de recherche pour le niveau difficile (IA Difficile) sans impacter l'expérience de jeu.
   
-### 3. Resultats :
-<![resultat obtenu](Benchmark.png)>
+### 3. Rapport Technique de Benchmark : Structures de Données. 
+
+Cette partie du rapport présente l'analyse comparative des performances de l'intelligence artificielle pour le jeu Fanoron-telo. Deux approches structurelles distinctes ont été soumises à un protocole d'évaluation automatisé sur 100 parties consécutives : la représentation par **Tableaux Classiques** (listes d'objets Python) et l'optimisation par **Opérations Bit à Bit (Bitboards)**.
+
+---
+
+#### 1. Résultats Comparatifs des Systèmes
+---
+* **Premiere version :**
+Cette configuration utilise des listes Python standards et des copies d'objets pour simuler l'arbre de jeu.
+
+  ***Nombre de parties simulées :*** 100
+  ***Distribution des résultats :*** Alpha-Beta (49.0%) | Minimax (51.0%)
+  ***Temps de réponse moyen Alpha-Beta :*** 6.2192 ms
+  ***Temps de réponse moyen Minimax :*** 75.4834 ms
+
+* **Seconde vesrion** : Représentation Bit à Bit (Bitboards) — *Configuration Optimisée*
+Cette implémentation repose sur le stockage de l'état du plateau sous forme d'entiers (9 bits) et valide les configurations via des opérations logiques bas niveau.
+
+  ***Nombre de parties simulées :*** 100
+  ***Distribution des résultats :*** Alpha-Beta (52.0%) | Minimax (48.0%)
+  ***Temps de réponse moyen Alpha-Beta :*** **0.0764 ms**
+  ***Temps de réponse moyen Minimax :*** **0.3643 ms**
+
+
+---
+
+#### 2. Synthèse Globale des Performances
+
+Le tableau ci-dessous synthétise l'impact combiné des algorithmes d'exploration et des structures de données sous-jacentes :
+
+| Métrique Spécifiée | Minimax (Tableau) | Alpha-Beta (Tableau) | Minimax (Bitbit) | Alpha-Beta (Bitbit) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Temps de réponse moyen** | 75.4834 ms | 6.2192 ms | 0.3643 ms | **0.0764 ms** |
+
+
+---
+
+#### 3. Analyse Critique des Écarts de Performance
+
+##### L'impact de la structure Bit à Bit (Bitboards)
+Le passage d'une représentation par tableaux classiques à une architecture bit à bit génère une accélération massive (le temps de l'Alpha-Beta s'effondre de **6.2192 ms** à **0.0764 ms**. 
+* **Élimination de la surcharge mémoire :** La méthode `copier_et_jouer` en mode classique instancie de nouveaux objets et duplique des listes Python à chaque nœud. En mode bit à bit, la copie se résume à une simple affectation de variables primitives de type entier, évitant les allocations mémoire répétées.
+* **Évaluation à l'échelle du processeur :** Les fonctions de détection de victoire et d'évaluation des lignes alignées n'effectuent plus d'itérations ou de comptages d'éléments dans des listes. Elles s'exécutent en un seul cycle d'horloge à l'aide de masques binaires et d'opérations logiques `AND` (`&`), `OR` (`|`) et de décalages de bits (`<<`, `>>`).
+
+### Comportement Logique et Équilibre Décisionnel
+* À profondeur équivalente et sous les mêmes règles d'évaluation heuristique, l'Alpha-Beta et le Minimax partagent une identité décisionnelle stricte.
+* Les légères fluctuations observées sur le taux de victoires (49% / 51% en classique contre 52% / 48% en bit à bit) proviennent de l'implémentation de la fonction `random.shuffle` sur la liste des coups légaux. En situation d'égalité de score sur plusieurs nœuds de l'arbre, l'ordre d'évaluation initial modifie de manière aléatoire le choix final de l'IA, sans altérer la cohérence mathématique des moteurs de jeu.
