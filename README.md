@@ -86,15 +86,17 @@ python app.main ou uvacorn app.main:app
  ```
 II .
 -Créer le fichier:
-
-env.local
 ```bash
-
+env.local
+```
 - Mettrez le fichier dedans:
 NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 - Pour aller dans front- end:
+```bash
 cd front-end
+```
 - Lancement de front-end:
+```bash
 npm run dev
 ```
 III - Pour lancer et accéder à votre projet:
