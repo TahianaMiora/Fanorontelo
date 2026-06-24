@@ -5,7 +5,7 @@
 * **Institution :** [Institut Supérieur Polytechnique de Madagascar](http://www.ispm-edu.com)
 * **Thème du projet :** Fanoron-telo avec IA
 * **Nom du groupe de projet :** `Nexus`
-* **Projet :** [Nexus FANORONTELO](https://fanorontelo-nexus.vercel.app/) 
+* **Projet :** [Nexus FANORONTELO](https://fanorontelo-nexus.vercel.app/) `(https://fanorontelo-nexus.vercel.app/)`
 
 ### Membres de l'équipe
 
@@ -98,15 +98,19 @@ cd front-end
 ```bash
 .env.local
 ```
-**- Mettrez ceci dans .env.local:**
+**- Mettez ceci dans .env.local:**
 ```bash
 NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+```
+**- Installation des dépendances:**
+```bash
+npm install
 ```
 **- Lancement de front-end:**
 ```bash
 npm run dev
 ```
-### **III - Pour lancer et accéder au projet:**
+### **III - Pour lancer et accéder au projet(localement):**
 ```bash
 http://localhost:3000
 ```
