@@ -64,12 +64,55 @@ Un alignement valide est constitué de 3 pions de la même couleur occupant :
 
 ---
 
-## Section 3 : Guide d'Installation Rapide
+## Section 3 : Guide d'Installation Rapide (Local)
 
 Suivez ces 3 étapes simples pour lancer l'application en local :
-
+- Pour cloner le projet:
 ```bash
 git clone <https://github.com/TahianaMiora/Fanorontelo>
-npm install
+```
+
+- Pour aller dans le back-end:
+```bash
+cd back-end
+```
+- Installation de requiremts-text:
+  ```bash
+    pip install -r requirements.txt
+  ```
+- Lancement de serveur ( back-end)
+ ```bash
+python app.main ou uvacorn app.main:app
+ ```
+II .
+-Créer le fichier:
+
+env.local
+```bash
+
+- Mettrez le fichier dedans:
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+- Pour aller dans front- end:
+cd front-end
+- Lancement de front-end:
 npm run dev
 ```
+III - Pour lancer et accéder à votre projet:
+```bash
+http://localhost:3000
+```
+## Section 4 : Outils d'Aide IA Utilisés
+
+### Exploitation des assistants IA
+Pour ce hackathon de 5 heures, notre équipe a pleinement exploité la puissance des assistants IA (notamment **ChatGPT** et **Gemini**) afin de maximiser notre vitesse de développement et de surmonter rapidement les blocages techniques. L'utilisation de l'IA nous a permis de paralléliser efficacement le travail entre les différents pôles (Moteur de jeu, IA et Front-end).
+
+### Exemples concrets d'utilisation
+L'IA est intervenue à plusieurs étapes clés de notre flux de travail :
+* **Écriture d'algorithmes et de structures :** Modélisation initiale de la matrice $3 \times 3$ du plateau de Fanorona-telo et génération des combinaisons de victoire sous forme de structures de données Python exploitables.
+* **Débogage rapide :** Résolution instantanée d'erreurs d'affichage et d'indentation (`IndentationError`, `AttributeError`) rencontrées dans notre terminal lors des phases de tests.
+* **Assistance à l'installation & Commandes :** Génération des scripts de démarrage du serveur de développement local (`npm run dev`) et dépannage sur les gestionnaires de paquets (`pip`).
+* **Documentation :** Aide à la structuration et à la rédaction professionnelle de ce rapport de projet (`README.md`).
+
+### Retour d'expérience et gain de temps
+* **Gain de temps estimé :** Environ **40% à 50% de temps gagné** sur la configuration de l'environnement et la résolution des bugs de syntaxe.
+* **Avis de l'équipe :** L'assistance IA a agi comme un véritable accélérateur de compétences ("force multiplier"). Au lieu de passer de précieuses minutes à chercher des erreurs de syntaxe, nous avons pu nous concentrer sur l'essentiel : la logique métier de la règle du jeu et l'optimisation de l'IA de jeu.
