@@ -88,7 +88,7 @@ def minimax(board: FanoronTeloBoard, prof: int, joueur: int):
                 best = coup
         return best_value, best
 
-
+# Mbola hatambatra amin'ny alpha-beta an'i Hasina :)
 def calculer_coup_ia(board: FanoronTeloBoard, est_max: bool, niveau: str = "moyen"):
     coups = GameRules.get_legal_moves(board)
     if not coups:
