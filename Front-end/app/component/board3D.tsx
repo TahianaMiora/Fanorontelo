@@ -208,8 +208,6 @@ export default function FanoronteloScene({ mode, config, aiConfig }: Fanorontelo
   
     useEffect(() => {
       const isMobile = window.innerWidth < 768;
-      // On éloigne la caméra en mobile pour voir l'ensemble
-      // Ajuste [x, y, z] selon tes besoins
       if (isMobile) {
         camera.position.set(0, 18, 18); 
       } else {
@@ -263,8 +261,13 @@ export default function FanoronteloScene({ mode, config, aiConfig }: Fanorontelo
           <h1 className="text-lg font-extrabold tracking-widest uppercase bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 bg-clip-text text-transparent flex items-center gap-2 drop-shadow-sm mb-1">
             Fanoron-telo <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
           </h1>
-          <h2>... Chargement </h2>
       </div>
+      <div className="absolute z-30 top-[45vh] w-full flex flex-col items-center justify-center gap-2">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent"></div>
+        <h2 className="text-center text-amber-500">... Chargement </h2>
+        <h3 className="text-sm text-center text-slate-700">Cela peut prendre quelques temps</h3>
+      </div>
+
     </div>
 
     ); 
