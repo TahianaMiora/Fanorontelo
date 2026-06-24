@@ -38,7 +38,7 @@ function TableBois() {
   );
 }
 
-interface FanoronteloProps { mode: GameMode, config: ModeConfig }
+interface FanoronteloProps { mode: GameMode, config: ModeConfig, aiConfig: { iaX: string, iaO: string }}
 
 interface GameState {
   grid: number[];
@@ -55,7 +55,8 @@ interface PieceData {
   index: number;
 }
 
-export default function FanoronteloScene({ mode, config }: FanoronteloProps) {
+export default function FanoronteloScene({ mode, config, aiConfig }: FanoronteloProps) {
+  console.log(mode, aiConfig)
   const API_URL = "http://127.0.0.1:8000/api";
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [selectedSrc, setSelectedSrc] = useState<number | null>(null);
@@ -96,6 +97,7 @@ export default function FanoronteloScene({ mode, config }: FanoronteloProps) {
           availablePrev.splice(matchIdx, 1);
         } else {
           matchIdx = availablePrev.findIndex(p => p.joueur === joueur);
+          const count = pieces.filter((element) => element.id.startsWith('pion${joueur}')).length
           
           if (matchIdx !== -1) {
             newPieces.push({ ...availablePrev[matchIdx], index });
@@ -201,15 +203,40 @@ export default function FanoronteloScene({ mode, config }: FanoronteloProps) {
 
 
   useEffect(() => {
-    if (gameState && config.isAiTurn(gameState.current_player)) {
+    if (!gameState || gameState.winner !== 0) return;
+  
+    const isAiTurn = config.isAiTurn(gameState.current_player);
+    
+    if (isAiTurn) {
       const timer = setTimeout(async () => {
-        //--------------------------------------- AI -------------------------------------------------
-        alert('AI')
-      }, mode === 'EvE' ? 300 : 1000); // Mode démo plus rapide
-      
+        try {
+          let response;
+          
+          if (mode === 'EvE') {
+            response = await fetch(`${API_URL}/ai-vs-ai`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ level_ia_x: aiConfig.iaX, level_ia_o: aiConfig.iaO }),
+            });
+          } else {
+            response = await fetch(`${API_URL}/ai-move?niveau=${aiConfig.iaO}`, {
+              method: "POST"
+            });
+          }
+  
+          if (!response.ok) throw new Error("Erreur lors du tour de l'IA");
+          
+          const data = await response.json();
+          setGameState(data);
+          setError(null);
+        } catch (err: any) {
+          setError("Erreur IA: " + err.message);
+        }
+      }, 1000);
+  
       return () => clearTimeout(timer);
     }
-  }, [gameState?.current_player, mode]);
+  }, [gameState?.current_player, gameState?.winner, mode, config]);
 
 
   return (
