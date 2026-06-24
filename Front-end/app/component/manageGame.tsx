@@ -7,6 +7,7 @@ import FanoronteloScene from "./board3D";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { GAME_MODES, GameMode } from "../utils/gameConfig";
+import { ChevronLeft } from "lucide-react";
 
 type Difficulty = "facile" | "moyen" | "difficile";
 interface AIConfig {
@@ -63,7 +64,7 @@ export default function GameApp() {
 
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
           <div className="flex flex-col items-center p-10 rounded-2xl bg-neutral-900/80 backdrop-blur-md border-2 border-amber-800 shadow-[0_0_50px_rgba(180,83,9,0.2)]">
-            <h1 className="text-5xl md:text-6xl font-bold text-amber-500 mb-8 tracking-widest uppercase drop-shadow-lg">
+            <h1 className="text-2xl md:text-6xl font-bold text-amber-500 mb-8 tracking-widest uppercase drop-shadow-lg">
               Fanorontelo
             </h1>
 
@@ -77,7 +78,7 @@ export default function GameApp() {
                       setGameStarted(true);
                     }
                   }}
-                  className={`w-72 py-4 text-xl font-semibold rounded transition-all duration-300 ${
+                  className={`w-[70svw] md:w-72 py-2 md:py-4 text-md md:text-xl font-semibold rounded transition-all duration-300 ${
                     m === "EvE"
                       ? mode === m ? "bg-neutral-600 text-white border border-neutral-400" : "bg-neutral-800/60 text-neutral-300 border border-neutral-600/80 hover:bg-neutral-700"
                       : mode === m ? "bg-amber-700 text-white border border-amber-500" : "bg-amber-900/50 text-amber-50 border border-amber-700/80 hover:bg-amber-800"
@@ -87,7 +88,7 @@ export default function GameApp() {
                 </button>
 
                 {mode === m && (
-                  <div className="absolute left-full top-0 ml-4 z-50 p-4 bg-neutral-800/90 rounded-lg border border-amber-900/50 w-72 flex flex-col gap-3 shadow-2xl">
+                  <div className="absolute md:left-full top-0 ml-4 z-50 p-4 bg-neutral-800/90 rounded-lg border border-amber-900/50 w-72 flex flex-col gap-3 shadow-2xl">
                     {m === "PvE" && (
                       <select className="bg-neutral-900 text-white p-2 rounded border border-amber-800" 
                         value={aiConfig.iaO}
@@ -128,10 +129,10 @@ export default function GameApp() {
   return (
     <div className="relative w-full h-screen font-sans">
       <button 
-        onClick={() => setGameStarted(false)}
-        className="absolute top-6 left-6 z-30 px-5 py-2 font-serif text-amber-100 bg-neutral-900/80 backdrop-blur-sm border border-amber-800 rounded-md shadow-lg hover:bg-red-900 transition-colors"
+        onClick={() => {setGameStarted(false), setMode(null)}}
+        className="absolute top-3 md:top-6 md:left-6 z-30 px-3 md:px-5 md:py-2 font-serif text-amber-100 md:bg-neutral-900/80 md:backdrop-blur-sm md:border border-amber-800 md:rounded-md shadow-lg hover:bg-red-900 text-lg md:text-lg md:transition-colors"
       >
-        ← Quitter
+        <ChevronLeft width={24} height={24}/>
       </button>
 
       <FanoronteloScene mode={mode!} config={GAME_MODES[mode!]} aiConfig={aiConfig} />
