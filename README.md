@@ -4,14 +4,15 @@
 
 * **Institution :** [Institut Supérieur Polytechnique de Madagascar](http://www.ispm-edu.com)
 * **Thème du projet :** Fanoron-telo avec IA
-* **Nom du groupe de projet :** `Mbola tediavina`
+* **Nom du groupe de projet :** `Nexus`
+* **Projet :** [Nexus FANORONTELO](https://fanorontelo-nexus.vercel.app/) 
 
 ### Membres de l'équipe
 
 | Numéro | Nom Complet | Classe | Rôle |
 | :--- | :--- | :--- | :--- |
 | 02 | Rasoamampionona Honorinne | ISAIA 4 | Membre 1 : Backend Architect / Game Logic Developer |
-| 06 | RAZAFIMANANTSOA Nathalie Malalasoa Kantoniaina| ISAIA 4 | Membre 2 : Optimization Expert & Règles|
+| 06 | RAZAFIMANANTSOA Nathalie Malalasoa Kantoniaina| ISAIA 4 | Membre 2 : Game Rules Optimization Expert & API Architect|
 | 07 | ANDRIAMANARIVO Tahiana Miora | ISAIA 4  | Membre 5 : UI/UX Designer & Frontend Lead |
 | 08 | RATSIMISETRA Hasiniaina | ISAIA 4  | Membre 4 : AI Optimization Expert — Niveaux Difficile & Avancé |
 | 11 | RAZANADRAKOTO Noël Patrick | ISAIA 4  | membre 7 :  Lead DevOps & Technical Writer |
@@ -60,7 +61,7 @@ Un alignement valide est constitué de 3 pions de la même couleur occupant :
 ### Stack technologique
 * **Back-end :** Python
 * **Front-end:** NextJS
-* **Déploiement / Hébergement :** [Fanorona](https:localhost)
+* **Déploiement / Hébergement :** [Fanorona](https://fanorontelo-nexus.vercel.app/)
 
 ---
 
