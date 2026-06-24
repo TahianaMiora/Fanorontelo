@@ -23,6 +23,9 @@ class FanoronTeloBoard:
         self.pieces_placed = {1: 0, -1: 0}
         self.history = []  # Pour l'option Undo (Priorité 3)
         self.redo_history = []  # Pour l'option Redo (Priorité 3)
+        # Représentation compacte: deux bitboards 9 bits (X et O)
+        self.x_bits = 0
+        self.o_bits = 0
 
     def copy(self):
         """Retourne une copie miroir indépendante (Crucial pour le Minimax)"""
@@ -31,7 +34,39 @@ class FanoronTeloBoard:
         new_board.current_player = self.current_player
         new_board.phase = self.phase
         new_board.pieces_placed = dict(self.pieces_placed)
+        new_board.x_bits = int(self.x_bits)
+        new_board.o_bits = int(self.o_bits)
         return new_board
+
+    def _sync_bits_from_grid(self):
+        """Met à jour `x_bits` et `o_bits` à partir de `grid`."""
+        xb = 0
+        ob = 0
+        for i, v in enumerate(self.grid):
+            if v == 1:
+                xb |= 1 << i
+            elif v == -1:
+                ob |= 1 << i
+        self.x_bits = xb
+        self.o_bits = ob
+
+    def set_cell(self, idx: int, player: int):
+        """Place ou retire une pièce à l'index `idx`.
+        player: 1 (X), -1 (O), 0 (empty)
+        Garde `grid` et les bitboards synchronisés."""
+        if player == 1:
+            self.x_bits |= (1 << idx)
+            self.o_bits &= ~(1 << idx)
+            self.grid[idx] = 1
+        elif player == -1:
+            self.o_bits |= (1 << idx)
+            self.x_bits &= ~(1 << idx)
+            self.grid[idx] = -1
+        else:
+            # vider
+            self.x_bits &= ~(1 << idx)
+            self.o_bits &= ~(1 << idx)
+            self.grid[idx] = 0
 
     def switch_player(self):
         """Alterne le joueur actuel de manière élégante"""

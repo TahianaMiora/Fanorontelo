@@ -5,6 +5,8 @@ from typing import Union, Tuple
 from app.core.board import FanoronTeloBoard
 from app.core.game_rules import GameRules
 from app.ai.advanced import calculer_coup_ia
+from app.ai import minimax as minimax_module
+from app.ai import alpha_beta as alpha_beta_module
 
 router = APIRouter()
 
@@ -133,4 +135,13 @@ def reset_game():
     """Réinitialise complètement la partie"""
     global current_game
     current_game = FanoronTeloBoard()
+    # Vider les tables de transposition pour éviter les interférences entre parties
+    try:
+        minimax_module.transposition_table.clear()
+    except Exception:
+        pass
+    try:
+        alpha_beta_module.transposition_table.clear()
+    except Exception:
+        pass
     return get_game_state()

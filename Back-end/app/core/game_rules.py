@@ -43,7 +43,7 @@ class GameRules:
         board.history.append((list(board.grid), board.current_player, board.phase, dict(board.pieces_placed)))
 
         # Application du coup
-        board.grid[position] = board.current_player
+        board.set_cell(position, board.current_player)
         board.pieces_placed[board.current_player] += 1
 
         # Changement de phase automatique si 6 pions au total
@@ -66,9 +66,9 @@ class GameRules:
         # Sauvegarde pour l'historique
         board.history.append((list(board.grid), board.current_player, board.phase, dict(board.pieces_placed)))
 
-        # Application du mouvement
-        board.grid[src] = 0
-        board.grid[dest] = board.current_player
+        # Application du mouvement (via set_cell pour garder les bitboards à jour)
+        board.set_cell(src, 0)
+        board.set_cell(dest, board.current_player)
 
         # Si pas de vainqueur immédiat, on change de tour
         if GameRules.check_winner(board) == 0:
@@ -82,6 +82,9 @@ class GameRules:
         board.redo_history.append((list(board.grid), board.current_player, board.phase, dict(board.pieces_placed)))
         # On applique l'ancien état
         board.grid, board.current_player, board.phase, board.pieces_placed = board.history.pop()
+        # resync bitboards
+        if hasattr(board, '_sync_bits_from_grid'):
+            board._sync_bits_from_grid()
         return True
 
     @staticmethod
@@ -91,4 +94,7 @@ class GameRules:
         board.history.append((list(board.grid), board.current_player, board.phase, dict(board.pieces_placed)))
         # On applique l'état rétabli
         board.grid, board.current_player, board.phase, board.pieces_placed = board.redo_history.pop()
+        # resync bitboards
+        if hasattr(board, '_sync_bits_from_grid'):
+            board._sync_bits_from_grid()
         return True

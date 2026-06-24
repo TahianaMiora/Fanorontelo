@@ -123,7 +123,6 @@ def executer_benchmarks(nombre_parties=100):
     print("--------------------------------------------------")
     print(f"Temps de réponse Alpha-Beta     : {moyen_ab:.4f} ms")
     print(f"Temps de réponse Minimax        : {moyen_mm:.4f} ms")
-    print(f"Gain d'efficacité algorithmique   : {gain_vitesse:.1f}x plus rapide")
     print("==================================================")
 
 if __name__ == "__main__":

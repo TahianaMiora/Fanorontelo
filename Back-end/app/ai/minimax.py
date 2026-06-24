@@ -7,6 +7,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from app.core.board import FanoronTeloBoard
 from app.core.game_rules import GameRules
 
+# Table de transposition simple: clé -> (value, best_move, depth)
+transposition_table = {}
+
 class OpeningBook:
     @staticmethod
     def obtenir_coup_ouverture(board: FanoronTeloBoard):
@@ -63,6 +66,14 @@ def play(board: FanoronTeloBoard, move) -> FanoronTeloBoard:
 
 
 def minimax(board: FanoronTeloBoard, prof: int, joueur: int):
+    key = (board.x_bits if hasattr(board, 'x_bits') else 0,
+           board.o_bits if hasattr(board, 'o_bits') else 0,
+           board.current_player, board.phase, prof, joueur)
+    if key in transposition_table:
+        val, mv, d = transposition_table[key]
+        if d >= prof:
+            return val, mv
+
     if prof == 0 or is_terminal(board):
         return eval_heuristique(board, joueur), None
 
@@ -81,6 +92,7 @@ def minimax(board: FanoronTeloBoard, prof: int, joueur: int):
             if val > best_value:
                 best_value = val
                 best = coup
+        transposition_table[key] = (best_value, best, prof)
         return best_value, best
     else:                               # Minimisant
         best_value = math.inf
@@ -90,6 +102,7 @@ def minimax(board: FanoronTeloBoard, prof: int, joueur: int):
             if val < best_value:
                 best_value = val
                 best = coup
+        transposition_table[key] = (best_value, best, prof)
         return best_value, best
 
 # Mbola hatambatra amin'ny alpha-beta an'i Hasina :)
