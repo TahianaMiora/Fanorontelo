@@ -61,7 +61,7 @@ Un alignement valide est constitué de 3 pions de la même couleur occupant :
 ### Stack technologique
 * **Back-end :** Python
 * **Front-end:** NextJS
-* **Déploiement / Hébergement :** [Fanorona](https://fanorontelo-nexus.vercel.app/)
+* **Déploiement / Hébergement :** [Fanorona](https://fanorontelo-nexus.vercel.app/). **NB:** L'animation des pieces rencontre un bug 
 
 ---
 
