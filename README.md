@@ -147,69 +147,63 @@ L'IA ayant absorbé la charge de travail répétitive et le débogage de premier
 
 > **Bilan d'impact :** Cette approche collaborative avec l'IA nous a permis d'accélérer notre cycle de développement d'environ 35%. L'IA n'a pas conçu le projet ; elle a nettoyé le chemin technique pour nous permettre de concevoir un système plus robuste et mieux optimisé.
 
-## Section 5 : Modélisation et algorithmes de l'IA su Jeu
+## Section 5 : Modélisation et Algorithmes de l'IA du Jeu
+
+Cette section détaille l'approche scientifique et les structures de données retenues pour modéliser le jeu de Fanoron-telo, ainsi que la logique décisionnelle des moteurs d'intelligence artificielle.
+
 ### 1. Représentation de l'état du plateau (Structures de Données)
 
-Pour modéliser le plateau du **Fanorona Telo** ($3 \times 3$), notre architecture utilise des structures de données contiguës et statiques hautement optimisées. Cette approche permet des transitions d'états instantanées, cruciales pour l'exploration rapide de l'arbre des coups par l'algorithme Minimax.
+Pour modéliser le plateau de Fanoron-telo ($3 \times 3$), notre architecture s'appuie sur deux représentations distinctes selon la version du moteur afin de maximiser l'efficacité algorithmique.
 
-#### A. Encodage numérique de la grille
-Le plateau de jeu est représenté par une structure unidimensionnelle aplatie (un tableau ou une liste Python de taille 9) :
+#### A. Version Classique : Encodage par vecteur contigu
+Le plateau est représenté par une structure unidimensionnelle aplatie (une liste Python de taille 9) :
 * **Structure :** `self.grid = [0] * 9`
 * **Indexation :** Les cases sont cartographiées de `0` à `8`, associant chaque ligne à un bloc de 3 éléments successifs :
     * Ligne supérieure : indices `0, 1, 2`
     * Ligne médiane : indices `3, 4, 5`
     * Ligne inférieure : indices `6, 7, 8`
 
-L'état des intersections est encodé de manière purement algébrique :
-* `0` : Intersection vacante.
-* `1` : Pion appartenant au **Joueur 1 (X)**.
-* `-1` : Pion appartenant au **Joueur 2 (O)**.
+L'état des intersections est encodé de manière algébrique : `0` pour une case vide, `1` pour le Joueur 1 (X) et `-1` pour le Joueur 2 (O).
 
-#### B. Modélisation topologique des connexions (Lignes orthogonales et diagonales)
-Le Fanorona possède une contrainte géométrique forte : le déplacement diagonal n'est autorisé que depuis les intersections dites "fortes". Plutôt que de recalculer dynamiquement ces contraintes à chaque tour (ce qui ralentirait l'IA), nous avons figé la topologie du plateau dans une **liste d'adjacence statique** (`ADJACENCY_LIST`) :
+#### B. Modélisation topologique des connexions
+Le Fanoron-telo possède une contrainte géométrique forte : le déplacement diagonal n'est autorisé que depuis les intersections dites "fortes". Pour éviter des calculs géométriques dynamiques coûteux, la topologie est figée dans une liste d'adjacence statique (`ADJACENCY_LIST`) :
+* **Intersections Faibles (indices impairs `1, 3, 5, 7`) :** Limitées à leurs voisins directs orthogonaux (cardinaux).
+* **Intersections Fortes (les 4 coins `0, 2, 6, 8` et le centre `4`) :** Connectivité élargie incluant les directions diagonales. L'index central `4` est ainsi nativement relié aux 8 autres cases du plateau.
 
-* **Intersections Faibles (indices impairs `1, 3, 5, 7`) :** Limitées à leurs voisins directs orthogonaux (cardinaux), restreignant le nombre de mouvements possibles.
-* **Intersections Fortes (les 4 coins `0, 2, 6, 8` et le centre `4`) :** Offrent une connectivité élargie incluant les directions diagonales. L'index central `4` est ainsi nativement interconnecté avec l'intégralité des 8 autres cases du plateau.
+La validation d'un déplacement s'effectue en temps constant `O(1)`.
 
-Cette modélisation permet de valider la légalité d'un déplacement en temps constant (`O(1)`) via une simple vérification d'appartenance : `dest in ADJACENCY_LIST[src]`.
+#### C. Version Optimisée : Architecture Bit à Bit (Bitboards)
+Dans la configuration avancée, l'état complet du plateau est condensé en deux entiers de 9 bits (un bitboard pour les pions de chaque joueur). Chaque bit (de 0 à 8) représente la présence (1) ou l'absence (0) d'un pion sur la case correspondante. Cette structure élimine les allocations de listes et permet de simuler les coups par de simples décalages de bits et masques binaires.
 
-#### C. Optimisation arithmétique des conditions de victoire
-La détection d'un alignement gagnant (`WINNING_LINES`) évite l'utilisation de boucles géométriques complexes grâce à l'évaluation arithmétique directe des 8 vecteurs de gains possibles (3 horizontaux, 3 verticaux, 2 diagonaux). 
+---
 
-Le calcul de la somme des valeurs des cases d'une ligne permet de déterminer instantanément le vainqueur :
-* $\sum (\text{Ligne}) = 3 \implies$ Victoire immédiate du Joueur 1 ($1 + 1 + 1$)
-* $\sum (\text{Ligne}) = -3 \implies$ Victoire immédiate du Joueur 2 ($-1 - 1 - 1$)
-### 2. Fonctionnement du Minimax et Définition de la Fonction d'Évaluation
+### 2. Fonctionnement du Minimax et de l'Élagage Alpha-Beta
 
-L'intelligence artificielle de notre moteur de jeu repose sur l'algorithme de décision classique **Minimax**. Cet algorithme modélise le jeu sous forme d'un arbre de décision où deux joueurs s'affrontent : le joueur **Maximisant** (l'IA, qui cherche à maximiser son gain) et le joueur **Minimisant** (l'adversaire, supposé jouer de manière optimale pour minimiser le score de l'IA).
-
-#### A. Architecture de l'Algorithme Minimax
-Notre implémentation suit une approche récursive avec une limite de profondeur fixe (`prof`) pour garantir des temps de réponse instantanés conformes aux exigences applicatives.
-
-1. **Condition d'arrêt (`is_terminal`) :** L'exploration de l'arbre s'arrête si la profondeur maximale est atteinte (`prof == 0`) ou si un état terminal est détecté (victoire d'un joueur ou situation de blocage/match nul sans coups légaux disponibles).
-2. **Phase de Simulation (`play`) :** À chaque nœud, l'IA génère les coups légaux (`GameRules.get_legal_moves`). Pour garantir la diversité du jeu et éviter un comportement déterministe linéaire, une opération de mélange aléatoire (`random.shuffle(coups)`) est injectée avant l'exploration. Le simulateur effectue une copie isolée du plateau (`board.copy()`) pour évaluer l'état futur sans altérer le cours réel de la partie.
-3. **Alternance des rôles :**
-    * **Maximiseur :** Initialisé à $-\infty$, il conserve la valeur la plus élevée parmi les simulations descendantes.
-    * **Minimiseur :** Initialisé à $+\infty$, il sélectionne la valeur la plus basse, simulant la meilleure contre-attaque adverse.
+#### A. Architecture de l'Algorithme
+L'intelligence artificielle repose sur une implémentation récursive de l'algorithme **Minimax** combinée à l'élagage **Alpha-Beta**. 
+* **Minimax classique :** Explore l'intégralité des configurations possibles jusqu'à une profondeur donnée afin de déterminer le coup optimal.
+* **Élagage Alpha-Beta :** Introduit deux bornes, $\alpha$ (le score minimum garanti pour le joueur Max) et $\beta$ (le score maximum garanti pour le joueur Min). Dès qu'une branche s'avère moins avantageuse qu'une alternative déjà explorée ($\beta \le \alpha$), l'exploration de ce sous-arbre est immédiatement interrompue (coupure), réduisant drastiquement l'espace de recherche.
 
 #### B. Définition de la Fonction d'Évaluation Heuristique
-Lorsque l'algorithme ne peut pas explorer l'arbre jusqu'à la fin de la partie, la fonction `eval_heuristique` estime mathématiquement la "qualité" d'une configuration intermédiaire du plateau. Le score retourné est calculé selon trois niveaux de priorités :
+La fonction `eval_heuristique` estime mathématiquement la qualité d'une configuration intermédiaire selon trois niveaux de priorités :
+1. **États Absolus :** $+1000$ pour une victoire de l'IA, $-1000$ pour une victoire adverse.
+2. **Contrôle Positionnel :** Attribution d'un bonus/malus de $\pm 15$ pour l'occupation de la case centrale `4`, point stratégique majeur du plateau.
+3. **Potentiel d'Alignement :** Analyse de chaque ligne de gain de `WINNING_LINES`. Une ligne contenant uniquement des pions alliés est récompensée ($+5$ par pion) pour encourager les attaques, tandis qu'une ligne occupée uniquement par l'adversaire est pénalisée ($-5$ par pion) pour forcer le blocage défensif.
 
-##### 1. États Absolus (Victoire / Défaite)
-Si l'état analysé mène à un alignement complet de 3 pions :
-* **$+1000$** si le vainqueur est le joueur maximisant.
-* **$-1000$** s'il s'agit d'une victoire adverse.
+---
 
-##### 2. Contrôle Positionnel Stratégique (Le Centre)
-En Phase 2 (déplacement des pions), l'intersection centrale (index `4`) est la case la plus critique du Fanorona Telo en raison de sa connectivité maximale (liée aux 8 autres cases) :
-* **$+15$** si l'IA occupe le centre.
-* **$-15$** si l'adversaire occupe le centre.
+### 3. Techniques Avancées Implémentées
 
-##### 3. Potentiel d'Alignement Combinatoire
-Pour chaque ligne de gain possible dans `WINNING_LINES`, l'heuristique évalue la configuration des forces en présence :
-* **Ligne sûre / Opportunité offensive :** Si une ligne contient uniquement des pions de l'IA et aucune pièce adverse (`pions_adv == 0`), le score augmente proportionnellement au nombre de pions présents ($\text{pionsJoueur} \times 5$) . Cela pousse l'IA à préparer des alignements de 2 pions.
-* **Danger défensif / Blocage :** Si une ligne contient des pions adverses mais aucun pion de l'IA (`pions_joueur == 0`), le score pénalise l'IA 
-$\text{pionsAdv} \times -5$, l'incitant à bloquer immédiatement les lignes où l'adversaire aligne déjà 2 pions.
+#### A. Opening Book (Bibliothèque d'ouvertures)
+Pour économiser le temps de calcul lors des premiers tours critiques et garantir une entame parfaite, une bibliothèque d'ouvertures statique a été intégrée :
+* **Premier coup absolu :** L'IA sélectionne systématiquement la case centrale (`4`) si elle commence la partie, s'assurant ainsi le meilleur contrôle topologique dès le départ.
+* **Second coup :** Si le centre est déjà occupé par l'adversaire, l'IA répond instantanément en occupant l'un des quatre coins du plateau (`0, 2, 6, 8`), préservant une connectivité diagonale forte.
+
+#### B. Opérations Bit à Bit / Bitboards
+L'utilisation des bitboards transforme les opérations de logique de jeu en instructions arithmétiques pures au niveau du processeur :
+* **Détection de victoire instantanée :** Les 8 lignes gagnantes sont enregistrées sous forme de masques binaires (ex: `0b11100000` pour la première ligne). La vérification de victoire se résume à un simple `AND` logique entre le bitboard du joueur et le masque de la ligne : `(bitboard & masque) == masque`.
+* **Simulations sans copie mémoire :** Au lieu de cloner des objets ou des tableaux avec `board.copy()`, la simulation d'un coup met à jour les entiers primitifs via des opérateurs logiques `|` (pose de pion) ou `^` (retrait/déplacement), rendant la descente dans l'arbre Alpha-Beta extrêmement légère et performante.
+
 ## Section 6 : Comparaison des Performances (Minimax vs Alpha-Beta)
 
 Cette section présente une analyse comparative des performances entre l'algorithme Minimax classique et l'algorithme optimisé avec l'élagage Alpha-Beta. Les données ont été recueillies sur une simulation automatisée de 100 parties sans affichage graphique afin d'isoler l'efficacité algorithmique pure.
@@ -228,14 +222,17 @@ Cette section présente une analyse comparative des performances entre l'algorit
 * **Convergence Décisionnelle (49.0% vs 51.0%) :** Cette quasi-égalité démontre la cohérence mathématique des deux implémentations. À profondeur égale et avec la même fonction d'évaluation, l'Alpha-Beta et le Minimax prennent des décisions identiques. L'écart minimal de 2% est uniquement induit par l'aspect stochastique du tri des coups (`random.shuffle`), qui fait pencher le choix lors d'égalités strictes de scores heuristiques.
 * **Explosion du Gain Temporel (plus rapide) :** L'élagage Alpha-Beta surclasse drastiquement le Minimax classique en éliminant l'exploration des branches inutiles (coupes Alpha et Beta). Le temps de réponse moyen chute de **75.48 ms** à **6.22 ms**.
 * **Optimisation Applicative :** Avec un temps d'exécution moyen inférieur à 10 ms, l'Alpha-Beta garantit une fluidité totale de l'interface utilisateur. Cette marge de performance permet d'augmenter significativement la profondeur de recherche pour le niveau difficile (IA Difficile) sans impacter l'expérience de jeu.
+
+### 3. IA facile vs IA difficile
+**Non**, l'IA difficile ne gagne pas toujours. L'aléa dans l'ordre d'exploration et les limites de l'évaluation permettent parfois à l'IA facile de l'emporter.
   
-### 3. Rapport Technique de Benchmark : Structures de Données. 
+### 4. Rapport Technique de Benchmark : Structures de Données. 
 
 Cette partie du rapport présente l'analyse comparative des performances de l'intelligence artificielle pour le jeu Fanoron-telo. Deux approches structurelles distinctes ont été soumises à un protocole d'évaluation automatisé sur 100 parties consécutives : la représentation par **Tableaux Classiques** (listes d'objets Python) et l'optimisation par **Opérations Bit à Bit (Bitboards)**.
 
 ---
 
-#### 1. Résultats Comparatifs des Systèmes
+####  Résultats Comparatifs des Systèmes
 ---
 * **Premiere version :**
 Cette configuration utilise des listes Python standards et des copies d'objets pour simuler l'arbre de jeu.
@@ -256,7 +253,7 @@ Cette implémentation repose sur le stockage de l'état du plateau sous forme d'
 
 ---
 
-#### 2. Synthèse Globale des Performances
+####  Synthèse Globale des Performances
 
 Le tableau ci-dessous synthétise l'impact combiné des algorithmes d'exploration et des structures de données sous-jacentes :
 
@@ -267,13 +264,13 @@ Le tableau ci-dessous synthétise l'impact combiné des algorithmes d'exploratio
 
 ---
 
-#### 3. Analyse Critique des Écarts de Performance
+####  Analyse Critique des Écarts de Performance
 
 ##### L'impact de la structure Bit à Bit (Bitboards)
 Le passage d'une représentation par tableaux classiques à une architecture bit à bit génère une accélération massive (le temps de l'Alpha-Beta s'effondre de **6.2192 ms** à **0.0764 ms**. 
 * **Élimination de la surcharge mémoire :** La méthode `copier_et_jouer` en mode classique instancie de nouveaux objets et duplique des listes Python à chaque nœud. En mode bit à bit, la copie se résume à une simple affectation de variables primitives de type entier, évitant les allocations mémoire répétées.
 * **Évaluation à l'échelle du processeur :** Les fonctions de détection de victoire et d'évaluation des lignes alignées n'effectuent plus d'itérations ou de comptages d'éléments dans des listes. Elles s'exécutent en un seul cycle d'horloge à l'aide de masques binaires et d'opérations logiques `AND` (`&`), `OR` (`|`) et de décalages de bits (`<<`, `>>`).
 
-### Comportement Logique et Équilibre Décisionnel
+#### Comportement Logique et Équilibre Décisionnel
 * À profondeur équivalente et sous les mêmes règles d'évaluation heuristique, l'Alpha-Beta et le Minimax partagent une identité décisionnelle stricte.
 * Les légères fluctuations observées sur le taux de victoires (49% / 51% en classique contre 52% / 48% en bit à bit) proviennent de l'implémentation de la fonction `random.shuffle` sur la liste des coups légaux. En situation d'égalité de score sur plusieurs nœuds de l'arbre, l'ordre d'évaluation initial modifie de manière aléatoire le choix final de l'IA, sans altérer la cohérence mathématique des moteurs de jeu.

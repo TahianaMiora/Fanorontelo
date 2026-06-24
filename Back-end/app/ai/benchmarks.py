@@ -62,6 +62,7 @@ def executer_benchmarks(nombre_parties=100):
             
             # Ajustement des profondeurs (Phase 1: 3, Phase 2: 4) pour éviter l'explosion combinatoire
             prof = 3 if plateau.phase == 1 else 7
+            # prof = 9
 
             # prof_1 = 7 # difficile
             # prof_2 = 2 # facile
