@@ -37,12 +37,14 @@ class FanoronTeloBoard:
         """Alterne le joueur actuel de manière élégante"""
         self.current_player = -self.current_player
 
-    def display_board(self):
-        """Affichage utilitaire dans la console pour déboguer"""
-        symbols = {0: ".", 1: "X", -1: "O"}
-        print(f"{symbols[self.grid[0]]} -- {symbols[self.grid[1]]} -- {symbols[self.grid[2]]}")
-        print(f"|  \\  |  /  |")
-        print(f"{symbols[self.grid[3]]} -- {symbols[self.grid[4]]} -- {symbols[self.grid[5]]}")
-        print(f"|  /  |  \\  |")
-        print(f"{symbols[self.grid[6]]} -- {symbols[self.grid[7]]} -- {symbols[self.grid[8]]}")
-        print(f"Tour du joueur : {'X' if self.current_player == 1 else 'O'} | Phase : {self.phase}\n")
+    def display_board(self): # novaiko kely le affichage 
+        """Affichage utilitaire clair pour la console."""
+        symbols = {0: '.', 1: 'X', -1: 'O'}
+        rows = []
+        for r in range(3):
+            row = ' | '.join(symbols[self.grid[r*3 + c]] for c in range(3))
+            rows.append(f" {row} ")
+
+        sep = '\n---+---+---\n'
+        print('\n' + sep.join(rows))
+        print(f"\nTour : {'X' if self.current_player == 1 else 'O'}    |    Phase : {self.phase}\n")

@@ -1,5 +1,7 @@
 import math
 import random
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 def alpha_beta(plateau, profondeur, alpha, beta, est_maximisant):
     if plateau.verifier_victoire():

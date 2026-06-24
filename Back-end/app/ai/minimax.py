@@ -1,5 +1,9 @@
 import random
 import math
+import sys, os
+# Aligne dynamiquement le chemin de recherche sur la racine du projet (Back-end)
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 from app.core.board import FanoronTeloBoard
 from app.core.game_rules import GameRules
 
